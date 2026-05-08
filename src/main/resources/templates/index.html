@@ -36,16 +36,44 @@
             font-size: 3rem;
             margin-bottom: 20px;
         }
+        .nav-cards {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        .nav-card {
+            display: block;
+            padding: 15px 25px;
+            background-color: #fdf5ed;
+            border: 2px solid #d4b896;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #4a3728;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.2s;
+        }
+        .nav-card:hover {
+            background-color: #6f4e37;
+            color: white;
+            border-color: #6f4e37;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="icon">☕</div>
-    <h1>Hello, Coffee World!</h1>
+    <h1>Brewmanager</h1>
     <p>Sua jornada para o café perfeito começa aqui.</p>
     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-    <small>Stack: Spring Boot + Thymeleaf + SQLite</small>
+    <div class="nav-cards" xmlns:th="http://www.thymeleaf.org">
+        <a th:href="@{/cafes}" class="nav-card">☕ Cafés</a>
+        <a th:href="@{/tipos-infusao}" class="nav-card">⚗️ Métodos</a>
+        <a th:href="@{/receitas}" class="nav-card">📋 Receitas</a>
+    </div>
 </div>
 
 </body>

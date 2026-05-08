@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${receita != null and receita.id != null ? 'Brewmanager - Editar Receita' : 'Brewmanager - Nova Receita'}"></title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fdfaf6; color: #4a3728; margin: 0; padding: 30px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #6f4e37; padding: 30px 40px; }
+        nav { margin-bottom: 25px; }
+        nav a { margin-right: 15px; color: #6f4e37; text-decoration: none; font-weight: 600; }
+        nav a:hover { text-decoration: underline; }
+        h2 { color: #4a3728; border-bottom: 2px solid #f0e6d9; padding-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        input, select { width: 100%; padding: 8px 12px; border: 1px solid #d4b896; border-radius: 6px; font-family: inherit; font-size: 1rem; color: #4a3728; background: #fdfaf6; box-sizing: border-box; margin-bottom: 15px; }
+        input:focus, select:focus { outline: none; border-color: #6f4e37; }
+        .btn { display: inline-block; padding: 10px 22px; border-radius: 6px; text-decoration: none; font-size: 1rem; cursor: pointer; border: none; font-family: inherit; }
+        .btn-primary { background-color: #6f4e37; color: white; }
+        .btn-primary:hover { background-color: #5a3e2b; }
+        .btn-secondary { background-color: #f0e6d9; color: #4a3728; }
+        .btn-secondary:hover { background-color: #e4d0b8; }
+        .erro { background-color: #fde8e8; color: #c0392b; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; }
+        small { color: #8b5a2b; display: block; margin-top: -10px; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav>
+        <a th:href="@{/}">☕ Início</a>
+        <a th:href="@{/cafes}">Cafés</a>
+        <a th:href="@{/tipos-infusao}">Métodos</a>
+        <a th:href="@{/receitas}">Receitas</a>
+    </nav>
+
+    <h2 th:text="${receita != null and receita.id != null ? 'Editar Receita' : 'Nova Receita'}"></h2>
+
+    <div class="erro" th:if="${erro}" th:text="${erro}"></div>
+
+    <form th:action="${receita != null and receita.id != null} ? @{/receitas/{id}(id=${receita.id})} : @{/receitas}" method="post">
+        <label for="cafeId">Café</label>
+        <select id="cafeId" name="cafeId">
+            <option value="">Selecione um café...</option>
+            <option th:each="cafe : ${cafes}" th:value="${cafe.id}" th:text="${cafe.nome}"
+                    th:selected="${receita != null and receita.cafe != null and receita.cafe.id == cafe.id}"></option>
+        </select>
+
+        <label for="tipoInfusaoId">Método de Infusão</label>
+        <select id="tipoInfusaoId" name="tipoInfusaoId">
+            <option value="">Selecione um método...</option>
+            <option th:each="tipo : ${tipos}" th:value="${tipo.id}" th:text="${tipo.nome}"
+                    th:selected="${receita != null and receita.tipoInfusao != null and receita.tipoInfusao.id == tipo.id}"></option>
+        </select>
+
+        <label for="ratio">Ratio</label>
+        <input type="text" id="ratio" name="ratio" placeholder="Ex: 1:15"
+               th:value="${receita != null ? receita.ratio : ''}">
+        <small>Formato: café:água (ex: 1:15 significa 1g de café para 15g de água)</small>
+
+        <label for="tempoInfusao">Tempo de Infusão (segundos)</label>
+        <input type="number" id="tempoInfusao" name="tempoInfusao" placeholder="Ex: 180" min="1"
+               th:value="${receita != null ? receita.tempoInfusao : ''}">
+
+        <label for="notaSensorial">Nota Sensorial (1 a 5)</label>
+        <select id="notaSensorial" name="notaSensorial">
+            <option value="">Sem avaliação</option>
+            <option value="1" th:selected="${receita != null and receita.notaSensorial == 1}">1 ★</option>
+            <option value="2" th:selected="${receita != null and receita.notaSensorial == 2}">2 ★★</option>
+            <option value="3" th:selected="${receita != null and receita.notaSensorial == 3}">3 ★★★</option>
+            <option value="4" th:selected="${receita != null and receita.notaSensorial == 4}">4 ★★★★</option>
+            <option value="5" th:selected="${receita != null and receita.notaSensorial == 5}">5 ★★★★★</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a th:href="@{/receitas}" class="btn btn-secondary" style="margin-left: 10px;">Cancelar</a>
+    </form>
+</div>
+</body>
+</html>

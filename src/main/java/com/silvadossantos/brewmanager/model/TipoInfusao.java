@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "cafes")
+@Table(name = "tiposInfusao")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Cafe {
+public class TipoInfusao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,11 +18,5 @@ public class Cafe {
     @Column(nullable = false)
     private String nome;
 
-    @Column(name = "marca_torrefacao")
-    private String marcaTorrefacao;
-
-    private String origem;
-
-    @Column(name = "nivel_torra")
-    private String nivelTorra;
+    private String descricao;
 }

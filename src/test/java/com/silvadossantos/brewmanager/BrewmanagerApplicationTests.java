@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class BrewmanagerApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void contextoCarrega() {
 	}
 
 }

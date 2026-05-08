@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${cafe.id == null ? 'Brewmanager - Novo Café' : 'Brewmanager - Editar Café'}"></title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fdfaf6; color: #4a3728; margin: 0; padding: 30px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #6f4e37; padding: 30px 40px; }
+        nav { margin-bottom: 25px; }
+        nav a { margin-right: 15px; color: #6f4e37; text-decoration: none; font-weight: 600; }
+        nav a:hover { text-decoration: underline; }
+        h2 { color: #4a3728; border-bottom: 2px solid #f0e6d9; padding-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        input, select { width: 100%; padding: 8px 12px; border: 1px solid #d4b896; border-radius: 6px; font-family: inherit; font-size: 1rem; color: #4a3728; background: #fdfaf6; box-sizing: border-box; margin-bottom: 15px; }
+        input:focus, select:focus { outline: none; border-color: #6f4e37; }
+        .btn { display: inline-block; padding: 10px 22px; border-radius: 6px; text-decoration: none; font-size: 1rem; cursor: pointer; border: none; font-family: inherit; }
+        .btn-primary { background-color: #6f4e37; color: white; }
+        .btn-primary:hover { background-color: #5a3e2b; }
+        .btn-secondary { background-color: #f0e6d9; color: #4a3728; }
+        .btn-secondary:hover { background-color: #e4d0b8; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav>
+        <a th:href="@{/}">☕ Início</a>
+        <a th:href="@{/cafes}">Cafés</a>
+        <a th:href="@{/tipos-infusao}">Métodos</a>
+        <a th:href="@{/receitas}">Receitas</a>
+    </nav>
+
+    <h2 th:text="${cafe.id == null ? 'Novo Café' : 'Editar Café'}"></h2>
+
+    <form th:action="${cafe.id == null} ? @{/cafes} : @{/cafes/{id}(id=${cafe.id})}" th:object="${cafe}" method="post">
+        <label for="nome">Nome *</label>
+        <input type="text" id="nome" th:field="*{nome}" placeholder="Ex: Bourbon Amarelo" required>
+
+        <label for="marcaTorrefacao">Marca / Torrefação</label>
+        <input type="text" id="marcaTorrefacao" th:field="*{marcaTorrefacao}" placeholder="Ex: Fazenda Santa Inês">
+
+        <label for="origem">Origem</label>
+        <input type="text" id="origem" th:field="*{origem}" placeholder="Ex: Minas Gerais, Brasil">
+
+        <label for="nivelTorra">Nível de Torra</label>
+        <select id="nivelTorra" th:field="*{nivelTorra}">
+            <option value="">Selecione...</option>
+            <option value="Claro">Claro</option>
+            <option value="Médio">Médio</option>
+            <option value="Escuro">Escuro</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a th:href="@{/cafes}" class="btn btn-secondary" style="margin-left: 10px;">Cancelar</a>
+    </form>
+</div>
+</body>
+</html>

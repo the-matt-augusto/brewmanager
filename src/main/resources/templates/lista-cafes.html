@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brewmanager - Cafés</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fdfaf6; color: #4a3728; margin: 0; padding: 30px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #6f4e37; padding: 30px 40px; }
+        nav { margin-bottom: 25px; }
+        nav a { margin-right: 15px; color: #6f4e37; text-decoration: none; font-weight: 600; }
+        nav a:hover { text-decoration: underline; }
+        h2 { color: #4a3728; border-bottom: 2px solid #f0e6d9; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background-color: #6f4e37; color: white; padding: 10px 15px; text-align: left; }
+        td { padding: 10px 15px; border-bottom: 1px solid #f0e6d9; vertical-align: middle; }
+        tr:hover { background-color: #fdf5ed; }
+        .btn { display: inline-block; padding: 5px 14px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; cursor: pointer; border: none; font-family: inherit; }
+        .btn-primary { background-color: #6f4e37; color: white; padding: 8px 18px; font-size: 0.9rem; }
+        .btn-primary:hover { background-color: #5a3e2b; }
+        .btn-edit { background-color: #d97706; color: white; }
+        .btn-edit:hover { background-color: #b45309; }
+        .btn-danger { background-color: #c0392b; color: white; }
+        .btn-danger:hover { background-color: #a93226; }
+        .acoes { white-space: nowrap; }
+        .vazio { color: #8b5a2b; font-style: italic; text-align: center; padding: 30px 0; }
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge-claro { background-color: #fef3c7; color: #92400e; }
+        .badge-medio { background-color: #fed7aa; color: #7c2d12; }
+        .badge-escuro { background-color: #78350f; color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav>
+        <a th:href="@{/}">☕ Início</a>
+        <a th:href="@{/cafes}">Cafés</a>
+        <a th:href="@{/tipos-infusao}">Métodos</a>
+        <a th:href="@{/receitas}">Receitas</a>
+    </nav>
+
+    <h2>Cafés Cadastrados</h2>
+
+    <a th:href="@{/cafes/novo}" class="btn btn-primary">+ Novo Café</a>
+
+    <table th:if="${!cafes.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Marca / Torrefação</th>
+            <th>Origem</th>
+            <th>Torra</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cafe : ${cafes}">
+            <td th:text="${cafe.nome}"></td>
+            <td th:text="${cafe.marcaTorrefacao}"></td>
+            <td th:text="${cafe.origem}"></td>
+            <td>
+                <span th:if="${cafe.nivelTorra == 'Claro'}" class="badge badge-claro">Claro</span>
+                <span th:if="${cafe.nivelTorra == 'Médio'}" class="badge badge-medio">Médio</span>
+                <span th:if="${cafe.nivelTorra == 'Escuro'}" class="badge badge-escuro">Escuro</span>
+                <span th:if="${cafe.nivelTorra != 'Claro' and cafe.nivelTorra != 'Médio' and cafe.nivelTorra != 'Escuro'}" th:text="${cafe.nivelTorra}"></span>
+            </td>
+            <td class="acoes">
+                <a th:href="@{/cafes/{id}/editar(id=${cafe.id})}" class="btn btn-edit" style="margin-right: 5px;">✏ Editar</a>
+                <a th:href="@{/cafes/{id}/excluir(id=${cafe.id})}" class="btn btn-danger"
+                   onclick="return confirm('Excluir este café?')">🗑 Excluir</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p class="vazio" th:if="${cafes.isEmpty()}">Nenhum café cadastrado ainda.</p>
+</div>
+</body>
+</html>

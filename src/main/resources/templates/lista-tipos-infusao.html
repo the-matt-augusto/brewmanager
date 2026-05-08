@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brewmanager - Métodos de Infusão</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fdfaf6; color: #4a3728; margin: 0; padding: 30px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #6f4e37; padding: 30px 40px; }
+        nav { margin-bottom: 25px; }
+        nav a { margin-right: 15px; color: #6f4e37; text-decoration: none; font-weight: 600; }
+        nav a:hover { text-decoration: underline; }
+        h2 { color: #4a3728; border-bottom: 2px solid #f0e6d9; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background-color: #6f4e37; color: white; padding: 10px 15px; text-align: left; }
+        td { padding: 10px 15px; border-bottom: 1px solid #f0e6d9; }
+        tr:hover { background-color: #fdf5ed; }
+        .btn { display: inline-block; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; cursor: pointer; border: none; }
+        .btn-primary { background-color: #6f4e37; color: white; }
+        .btn-primary:hover { background-color: #5a3e2b; }
+        .btn-edit { background-color: #d97706; color: white; }
+        .btn-edit:hover { background-color: #b45309; }
+        .btn-danger { background-color: #c0392b; color: white; }
+        .btn-danger:hover { background-color: #a93226; }
+        .acoes { white-space: nowrap; }
+        .vazio { color: #8b5a2b; font-style: italic; text-align: center; padding: 30px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav>
+        <a th:href="@{/}">☕ Início</a>
+        <a th:href="@{/cafes}">Cafés</a>
+        <a th:href="@{/tipos-infusao}">Métodos</a>
+        <a th:href="@{/receitas}">Receitas</a>
+    </nav>
+
+    <h2>Métodos de Infusão</h2>
+
+    <a th:href="@{/tipos-infusao/novo}" class="btn btn-primary">+ Novo Método</a>
+
+    <table th:if="${!tipos.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tipo : ${tipos}">
+            <td th:text="${tipo.nome}"></td>
+            <td th:text="${tipo.descricao}"></td>
+            <td class="acoes">
+                <a th:href="@{/tipos-infusao/{id}/editar(id=${tipo.id})}" class="btn btn-edit" style="margin-right: 5px;">✏ Editar</a>
+                <a th:href="@{/tipos-infusao/{id}/excluir(id=${tipo.id})}" class="btn btn-danger"
+                   onclick="return confirm('Excluir este método?')">🗑 Excluir</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p class="vazio" th:if="${tipos.isEmpty()}">Nenhum método cadastrado ainda.</p>
+</div>
+</body>
+</html>
