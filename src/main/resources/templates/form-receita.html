@@ -30,6 +30,7 @@
         <a th:href="@{/cafes}">Cafés</a>
         <a th:href="@{/tipos-infusao}">Métodos</a>
         <a th:href="@{/receitas}">Receitas</a>
+        <a th:href="@{/timer}">Timer</a>
     </nav>
 
     <h2 th:text="${receita != null and receita.id != null ? 'Editar Receita' : 'Nova Receita'}"></h2>
@@ -51,9 +52,9 @@
                     th:selected="${receita != null and receita.tipoInfusao != null and receita.tipoInfusao.id == tipo.id}"></option>
         </select>
 
-        <label for="ratio">Ratio</label>
-        <input type="text" id="ratio" name="ratio" placeholder="Ex: 1:15"
-               th:value="${receita != null ? receita.ratio : ''}">
+        <label for="proporcao">Proporção</label>
+        <input type="text" id="proporcao" name="proporcao" placeholder="Ex: 1:15"
+               th:value="${receita != null ? receita.proporcao : ''}">
         <small>Formato: café:água (ex: 1:15 significa 1g de café para 15g de água)</small>
 
         <label for="tempoInfusao">Tempo de Infusão (segundos)</label>

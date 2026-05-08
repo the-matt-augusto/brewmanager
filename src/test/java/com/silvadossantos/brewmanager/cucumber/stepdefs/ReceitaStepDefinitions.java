@@ -59,10 +59,10 @@ public class ReceitaStepDefinitions {
         tipoInfusaoId = tipo.getId();
     }
 
-    @Quando("eu cadastro uma receita com ratio {string}, tempo {int} e nota {int}")
-    public void eu_cadastro_receita(String ratio, int tempo, int nota) throws Exception {
+    @Quando("eu cadastro uma receita com proporção {string}, tempo {int} e nota {int}")
+    public void eu_cadastro_receita(String proporcao, int tempo, int nota) throws Exception {
         lastResult = mockMvc.perform(post("/receitas")
-                        .param("ratio", ratio)
+                        .param("proporcao", proporcao)
                         .param("tempoInfusao", String.valueOf(tempo))
                         .param("notaSensorial", String.valueOf(nota))
                         .param("cafeId", cafeId != null ? cafeId.toString() : "")
@@ -82,10 +82,10 @@ public class ReceitaStepDefinitions {
                 .andReturn();
     }
 
-    @Quando("eu tento cadastrar uma receita com ratio {string}")
-    public void eu_tento_cadastrar_receita_com_ratio_invalido(String ratio) throws Exception {
+    @Quando("eu tento cadastrar uma receita com proporção {string}")
+    public void eu_tento_cadastrar_receita_com_proporcao_invalida(String proporcao) throws Exception {
         lastResult = mockMvc.perform(post("/receitas")
-                        .param("ratio", ratio))
+                        .param("proporcao", proporcao))
                 .andReturn();
     }
 

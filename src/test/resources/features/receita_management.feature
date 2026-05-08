@@ -7,7 +7,7 @@ Funcionalidade: Gerenciamento de Receitas de Preparo
   Cenário: Cadastrar uma receita válida
     Dado que existe um café chamado "Bourbon Amarelo" para a receita
     E que existe um método chamado "V60" para a receita
-    Quando eu cadastro uma receita com ratio "1:15", tempo 180 e nota 4
+    Quando eu cadastro uma receita com proporção "1:15", tempo 180 e nota 4
     Então a receita deve estar salva no banco de dados
 
   Cenário: Rejeitar receita com nota sensorial inválida
@@ -17,9 +17,9 @@ Funcionalidade: Gerenciamento de Receitas de Preparo
     Então a receita não deve ser salva
     E o sistema deve exibir o erro "Nota sensorial deve ser entre 1 e 5."
 
-  Cenário: Rejeitar receita com ratio inválido
+  Cenário: Rejeitar receita com proporção inválida
     Dado que existe um café chamado "Bourbon Amarelo" para a receita
     E que existe um método chamado "V60" para a receita
-    Quando eu tento cadastrar uma receita com ratio "invalido"
+    Quando eu tento cadastrar uma receita com proporção "invalido"
     Então a receita não deve ser salva
-    E o sistema deve exibir o erro "Ratio inválido. Use o formato 1:15."
+    E o sistema deve exibir o erro "Proporção inválida. Use o formato 1:15."

@@ -34,6 +34,7 @@
         <a th:href="@{/cafes}">Cafés</a>
         <a th:href="@{/tipos-infusao}">Métodos</a>
         <a th:href="@{/receitas}">Receitas</a>
+        <a th:href="@{/timer}">Timer</a>
     </nav>
 
     <h2>Receitas de Preparo</h2>
@@ -45,7 +46,7 @@
         <tr>
             <th>Café</th>
             <th>Método</th>
-            <th>Ratio</th>
+            <th>Proporção</th>
             <th>Tempo (s)</th>
             <th>Nota</th>
             <th></th>
@@ -55,7 +56,7 @@
         <tr th:each="receita : ${receitas}">
             <td th:text="${receita.cafe != null ? receita.cafe.nome : '-'}"></td>
             <td th:text="${receita.tipoInfusao != null ? receita.tipoInfusao.nome : '-'}"></td>
-            <td th:text="${receita.ratio}"></td>
+            <td th:text="${receita.proporcao}"></td>
             <td th:text="${receita.tempoInfusao}"></td>
             <td>
                 <span class="estrelas" th:text="${'★'.repeat(receita.notaSensorial != null ? receita.notaSensorial : 0)}"></span>

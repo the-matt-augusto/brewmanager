@@ -73,10 +73,10 @@ class ReceitaControllerTest {
     @Test
     @DisplayName("POST /receitas deve salvar e redirecionar com dados válidos")
     void deveSalvarERedirecionar() throws Exception {
-        when(receitaService.save(any())).thenReturn(Receita.builder().id(1L).ratio("1:15").build());
+        when(receitaService.save(any())).thenReturn(Receita.builder().id(1L).proporcao("1:15").build());
 
         mockMvc.perform(post("/receitas")
-                        .param("ratio", "1:15")
+                        .param("proporcao", "1:15")
                         .param("tempoInfusao", "180")
                         .param("notaSensorial", "4"))
                 .andExpect(status().is3xxRedirection())
@@ -95,7 +95,7 @@ class ReceitaControllerTest {
         mockMvc.perform(post("/receitas")
                         .param("cafeId", "1")
                         .param("tipoInfusaoId", "1")
-                        .param("ratio", "1:15"))
+                        .param("proporcao", "1:15"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/receitas"));
     }
@@ -130,27 +130,27 @@ class ReceitaControllerTest {
     @Test
     @DisplayName("POST /receitas/{id} deve atualizar e redirecionar com dados válidos")
     void deveAtualizarERedirecionar() throws Exception {
-        when(receitaService.save(any())).thenReturn(Receita.builder().id(1L).ratio("1:16").build());
+        when(receitaService.save(any())).thenReturn(Receita.builder().id(1L).proporcao("1:16").build());
 
         mockMvc.perform(post("/receitas/1")
-                        .param("ratio", "1:16")
+                        .param("proporcao", "1:16")
                         .param("notaSensorial", "5"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/receitas"));
     }
 
     @Test
-    @DisplayName("POST /receitas/{id} com ratio inválido deve retornar formulário com erro")
-    void deveRetornarFormularioComErroParaRatioInvalidoNaAtualizacao() throws Exception {
-        when(receitaService.save(any())).thenThrow(new IllegalArgumentException("Ratio inválido. Use o formato 1:15."));
+    @DisplayName("POST /receitas/{id} com proporção inválida deve retornar formulário com erro")
+    void deveRetornarFormularioComErroParaProporcaoInvalidaNaAtualizacao() throws Exception {
+        when(receitaService.save(any())).thenThrow(new IllegalArgumentException("Proporção inválida. Use o formato 1:15."));
         when(cafeService.findAll()).thenReturn(List.of());
         when(tipoInfusaoService.findAll()).thenReturn(List.of());
 
         mockMvc.perform(post("/receitas/1")
-                        .param("ratio", "invalido"))
+                        .param("proporcao", "invalido"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("form-receita"))
-                .andExpect(model().attribute("erro", "Ratio inválido. Use o formato 1:15."));
+                .andExpect(model().attribute("erro", "Proporção inválida. Use o formato 1:15."));
     }
 
     @Test

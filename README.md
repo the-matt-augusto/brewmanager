@@ -4,24 +4,25 @@ Brewmanager é uma aplicação Spring Boot moderna projetada para entusiastas de
 
 ## Propósito do Projeto
 
-O objetivo do Brewmanager é fornecer uma ferramenta simples, porém robusta, para o controle de inventário de cafés e o registro detalhado de métodos de infusão. O sistema permite que o usuário acompanhe diferentes grãos, torrefações e receitas, ajudando a encontrar o "ratio" perfeito para cada xícara.
+O objetivo do Brewmanager é fornecer uma ferramenta simples, porém robusta, para o controle de inventário de cafés e o registro detalhado de métodos de infusão. O sistema permite que o usuário acompanhe diferentes grãos, torrefações, níveis de moagem e receitas, ajudando a encontrar a proporção perfeita para cada xícara.
 
 ## O que o sistema faz
 
-- **Gestão de Cafés**: Cadastro detalhado de grãos, incluindo marca, origem e nível de torra.
+- **Gestão de Cafés**: Cadastro detalhado de grãos, incluindo marca, origem, nível de torra, tipo de café (grão ou moído) e nível de moagem.
 - **Métodos de Infusão**: Registro de diferentes formas de preparo (V60, Aeropress, Prensa Francesa, etc.).
 - **Diário de Receitas**: Criação de receitas vinculando cafés e métodos, com controle de:
-    - Ratio (proporção pó/água).
+    - Proporção (ex: 1:15).
     - Tempo de infusão.
     - Nota sensorial (avaliação de 1 a 5).
-- **Interface Web**: Interface amigável utilizando Thymeleaf para renderização server-side.
+- **Timer de Preparo**: Funcionalidade interativa para cronometrar a extração, com suporte a metas de tempo baseadas nas receitas cadastradas.
+- **Interface Web**: Interface amigável utilizando Thymeleaf para renderização server-side com um visual focado no tema café.
 - **Persistência Confiável**: Utiliza SQLite para um armazenamento leve e eficiente, sem necessidade de configuração complexa de banco de dados.
 
 ## Requisitos para Execução
 
 Para rodar o projeto localmente, você precisará de:
 
-- **Java 17** ou superior.
+- **Java 25**.
 - **Maven 3.6+** (ou utilizar o Maven Wrapper incluso no projeto).
 - Um navegador web moderno.
 

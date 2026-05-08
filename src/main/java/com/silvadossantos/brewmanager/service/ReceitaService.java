@@ -18,7 +18,7 @@ public class ReceitaService {
 
     public Receita save(Receita receita) {
         validateNotaSensorial(receita.getNotaSensorial());
-        validateRatio(receita.getRatio());
+        validateProporcao(receita.getProporcao());
         return receitaRepository.save(receita);
     }
 
@@ -37,9 +37,9 @@ public class ReceitaService {
         }
     }
 
-    private void validateRatio(String ratio) {
-        if (ratio != null && !ratio.isBlank() && !ratio.matches("\\d+:\\d+")) {
-            throw new IllegalArgumentException("Ratio inválido. Use o formato 1:15.");
+    private void validateProporcao(String proporcao) {
+        if (proporcao != null && !proporcao.isBlank() && !proporcao.matches("\\d+:\\d+")) {
+            throw new IllegalArgumentException("Proporção inválida. Use o formato 1:15.");
         }
     }
 }

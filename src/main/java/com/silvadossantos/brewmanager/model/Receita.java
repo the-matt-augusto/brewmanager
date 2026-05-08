@@ -23,7 +23,8 @@ public class Receita {
     @JoinColumn(name = "cafe_id")
     private Cafe cafe;
 
-    private String ratio;
+    @Column(name = "proporcao")
+    private String proporcao;
 
     @Column(name = "tempo_infusao")
     private Integer tempoInfusao;

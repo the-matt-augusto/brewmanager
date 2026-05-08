@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brewmanager - Timer</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fdfaf6; color: #4a3728; margin: 0; padding: 30px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 5px solid #6f4e37; padding: 30px 40px; }
+        nav { margin-bottom: 25px; }
+        nav a { margin-right: 15px; color: #6f4e37; text-decoration: none; font-weight: 600; }
+        nav a:hover { text-decoration: underline; }
+        h2 { color: #4a3728; border-bottom: 2px solid #f0e6d9; padding-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        select { width: 100%; padding: 8px 12px; border: 1px solid #d4b896; border-radius: 6px; font-family: inherit; font-size: 1rem; color: #4a3728; background: #fdfaf6; box-sizing: border-box; margin-bottom: 20px; }
+        select:focus { outline: none; border-color: #6f4e37; }
+        .timer-display { text-align: center; margin: 30px 0 20px; }
+        .timer-clock { font-size: 5rem; font-weight: 700; letter-spacing: 4px; color: #4a3728; font-variant-numeric: tabular-nums; }
+        .timer-clock.running { color: #6f4e37; }
+        .timer-clock.overtime { color: #c0392b; }
+        .expected-info { text-align: center; font-size: 0.95rem; color: #8b5a2b; min-height: 22px; margin-bottom: 10px; }
+        .progress-bar-wrap { background: #f0e6d9; border-radius: 8px; height: 12px; margin-bottom: 25px; overflow: hidden; display: none; }
+        .progress-bar { height: 100%; border-radius: 8px; background: #6f4e37; transition: width 0.5s linear, background 0.3s; width: 0%; }
+        .progress-bar.overtime { background: #c0392b; width: 100%; }
+        .btn-group { display: flex; gap: 12px; justify-content: center; }
+        .btn { padding: 12px 28px; border-radius: 8px; font-size: 1rem; cursor: pointer; border: none; font-family: inherit; font-weight: 600; }
+        .btn-start { background-color: #6f4e37; color: white; }
+        .btn-start:hover { background-color: #5a3e2b; }
+        .btn-pause { background-color: #d97706; color: white; }
+        .btn-pause:hover { background-color: #b45309; }
+        .btn-reset { background-color: #f0e6d9; color: #4a3728; }
+        .btn-reset:hover { background-color: #e4d0b8; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav>
+        <a th:href="@{/}">☕ Início</a>
+        <a th:href="@{/cafes}">Cafés</a>
+        <a th:href="@{/tipos-infusao}">Métodos</a>
+        <a th:href="@{/receitas}">Receitas</a>
+        <a th:href="@{/timer}">Timer</a>
+    </nav>
+
+    <h2>⏱ Timer de Preparo</h2>
+
+    <label for="receitaSelect">Receita (opcional)</label>
+    <select id="receitaSelect">
+        <option value="" data-tempo="">Nenhuma receita selecionada</option>
+        <option th:each="r : ${receitas}"
+                th:value="${r.id}"
+                th:data-tempo="${r.tempoInfusao}"
+                th:text="${(r.cafe != null ? r.cafe.nome : '?') + ' — ' + (r.tipoInfusao != null ? r.tipoInfusao.nome : '?') + (r.tempoInfusao != null ? ' (' + r.tempoInfusao + 's)' : '')}">
+        </option>
+    </select>
+
+    <div class="expected-info" id="expectedInfo"></div>
+
+    <div class="timer-display">
+        <div class="timer-clock" id="timerClock">00:00</div>
+    </div>
+
+    <div class="progress-bar-wrap" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-start" id="btnStartPause" onclick="toggleStartPause()">Iniciar</button>
+        <button class="btn btn-reset" id="btnReset" onclick="resetTimer()">Resetar</button>
+    </div>
+</div>
+
+<script>
+    let elapsed = 0;
+    let intervalId = null;
+    let running = false;
+
+    const clock = document.getElementById('timerClock');
+    const btnStartPause = document.getElementById('btnStartPause');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressBar = document.getElementById('progressBar');
+    const expectedInfo = document.getElementById('expectedInfo');
+    const receitaSelect = document.getElementById('receitaSelect');
+
+    function getExpectedSeconds() {
+        const opt = receitaSelect.options[receitaSelect.selectedIndex];
+        const t = opt.getAttribute('data-tempo');
+        return t ? parseInt(t, 10) : null;
+    }
+
+    receitaSelect.addEventListener('change', function () {
+        const expected = getExpectedSeconds();
+        if (expected) {
+            const m = Math.floor(expected / 60).toString().padStart(2, '0');
+            const s = (expected % 60).toString().padStart(2, '0');
+            expectedInfo.textContent = 'Tempo esperado: ' + m + ':' + s;
+            progressWrap.style.display = 'block';
+        } else {
+            expectedInfo.textContent = '';
+            progressWrap.style.display = 'none';
+        }
+        updateDisplay();
+    });
+
+    function formatTime(secs) {
+        const m = Math.floor(secs / 60).toString().padStart(2, '0');
+        const s = (secs % 60).toString().padStart(2, '0');
+        return m + ':' + s;
+    }
+
+    function updateDisplay() {
+        clock.textContent = formatTime(elapsed);
+        const expected = getExpectedSeconds();
+        if (expected) {
+            if (elapsed >= expected) {
+                clock.className = 'timer-clock overtime';
+                progressBar.className = 'progress-bar overtime';
+            } else {
+                clock.className = running ? 'timer-clock running' : 'timer-clock';
+                progressBar.className = 'progress-bar';
+                progressBar.style.width = Math.min((elapsed / expected) * 100, 100) + '%';
+            }
+        } else {
+            clock.className = running ? 'timer-clock running' : 'timer-clock';
+        }
+    }
+
+    function toggleStartPause() {
+        if (running) {
+            clearInterval(intervalId);
+            running = false;
+            btnStartPause.textContent = 'Continuar';
+            btnStartPause.className = 'btn btn-start';
+        } else {
+            running = true;
+            btnStartPause.textContent = 'Pausar';
+            btnStartPause.className = 'btn btn-pause';
+            intervalId = setInterval(function () {
+                elapsed++;
+                updateDisplay();
+            }, 1000);
+        }
+    }
+
+    function resetTimer() {
+        clearInterval(intervalId);
+        running = false;
+        elapsed = 0;
+        btnStartPause.textContent = 'Iniciar';
+        btnStartPause.className = 'btn btn-start';
+        progressBar.style.width = '0%';
+        progressBar.className = 'progress-bar';
+        updateDisplay();
+    }
+</script>
+</body>
+</html>

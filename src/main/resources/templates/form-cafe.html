@@ -28,6 +28,7 @@
         <a th:href="@{/cafes}">Cafés</a>
         <a th:href="@{/tipos-infusao}">Métodos</a>
         <a th:href="@{/receitas}">Receitas</a>
+        <a th:href="@{/timer}">Timer</a>
     </nav>
 
     <h2 th:text="${cafe.id == null ? 'Novo Café' : 'Editar Café'}"></h2>
@@ -48,6 +49,23 @@
             <option value="Claro">Claro</option>
             <option value="Médio">Médio</option>
             <option value="Escuro">Escuro</option>
+        </select>
+
+        <label for="tipoCafe">Tipo de Café</label>
+        <select id="tipoCafe" th:field="*{tipoCafe}">
+            <option value="">Selecione...</option>
+            <option value="Grão inteiro">Grão inteiro</option>
+            <option value="Moído">Moído</option>
+        </select>
+
+        <label for="nivelMoagem">Nível de Moagem</label>
+        <select id="nivelMoagem" th:field="*{nivelMoagem}">
+            <option value="">Selecione...</option>
+            <option value="Fino">Fino</option>
+            <option value="Médio-fino">Médio-fino</option>
+            <option value="Médio">Médio</option>
+            <option value="Médio-grosso">Médio-grosso</option>
+            <option value="Grosso">Grosso</option>
         </select>
 
         <button type="submit" class="btn btn-primary">Salvar</button>

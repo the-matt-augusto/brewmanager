@@ -37,6 +37,7 @@
         <a th:href="@{/cafes}">Cafés</a>
         <a th:href="@{/tipos-infusao}">Métodos</a>
         <a th:href="@{/receitas}">Receitas</a>
+        <a th:href="@{/timer}">Timer</a>
     </nav>
 
     <h2>Cafés Cadastrados</h2>
@@ -50,6 +51,8 @@
             <th>Marca / Torrefação</th>
             <th>Origem</th>
             <th>Torra</th>
+            <th>Tipo</th>
+            <th>Moagem</th>
             <th></th>
         </tr>
         </thead>
@@ -64,6 +67,8 @@
                 <span th:if="${cafe.nivelTorra == 'Escuro'}" class="badge badge-escuro">Escuro</span>
                 <span th:if="${cafe.nivelTorra != 'Claro' and cafe.nivelTorra != 'Médio' and cafe.nivelTorra != 'Escuro'}" th:text="${cafe.nivelTorra}"></span>
             </td>
+            <td th:text="${cafe.tipoCafe}"></td>
+            <td th:text="${cafe.nivelMoagem}"></td>
             <td class="acoes">
                 <a th:href="@{/cafes/{id}/editar(id=${cafe.id})}" class="btn btn-edit" style="margin-right: 5px;">✏ Editar</a>
                 <a th:href="@{/cafes/{id}/excluir(id=${cafe.id})}" class="btn btn-danger"

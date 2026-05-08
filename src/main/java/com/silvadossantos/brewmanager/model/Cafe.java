@@ -25,4 +25,10 @@ public class Cafe {
 
     @Column(name = "nivel_torra")
     private String nivelTorra;
+
+    @Column(name = "tipo_cafe")
+    private String tipoCafe;
+
+    @Column(name = "nivel_moagem")
+    private String nivelMoagem;
 }
