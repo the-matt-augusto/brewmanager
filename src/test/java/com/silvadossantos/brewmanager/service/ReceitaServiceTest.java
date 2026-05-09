@@ -1,5 +1,6 @@
 package com.silvadossantos.brewmanager.service;
 
+import com.silvadossantos.brewmanager.model.IngredienteReceita;
 import com.silvadossantos.brewmanager.model.Receita;
 import com.silvadossantos.brewmanager.repository.ReceitaRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -130,6 +131,53 @@ class ReceitaServiceTest {
 
         receitaService.save(receita);
 
+        verify(receitaRepository).save(receita);
+    }
+
+    @Test
+    @DisplayName("Deve salvar receita com ingredientes")
+    void deveSalvarReceitaComIngredientes() {
+        Receita receita = Receita.builder()
+                .proporcao("1:10")
+                .tempoInfusao(180)
+                .notaSensorial(4)
+                .build();
+
+        IngredienteReceita ing1 = IngredienteReceita.builder()
+                .nome("açúcar")
+                .quantidade("2 colheres")
+                .receita(receita)
+                .build();
+
+        IngredienteReceita ing2 = IngredienteReceita.builder()
+                .nome("leite")
+                .quantidade("100ml")
+                .receita(receita)
+                .build();
+
+        receita.setIngredientes(List.of(ing1, ing2));
+
+        Receita savedReceita = Receita.builder()
+                .id(1L)
+                .proporcao("1:10")
+                .tempoInfusao(180)
+                .notaSensorial(4)
+                .ingredientes(List.of(
+                        IngredienteReceita.builder().id(1L).nome("açúcar").quantidade("2 colheres").build(),
+                        IngredienteReceita.builder().id(2L).nome("leite").quantidade("100ml").build()
+                ))
+                .build();
+
+        when(receitaRepository.save(any(Receita.class))).thenReturn(savedReceita);
+
+        Receita result = receitaService.save(receita);
+
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getIngredientes()).hasSize(2);
+        assertThat(result.getIngredientes().get(0).getNome()).isEqualTo("açúcar");
+        assertThat(result.getIngredientes().get(0).getQuantidade()).isEqualTo("2 colheres");
+        assertThat(result.getIngredientes().get(1).getNome()).isEqualTo("leite");
+        assertThat(result.getIngredientes().get(1).getQuantidade()).isEqualTo("100ml");
         verify(receitaRepository).save(receita);
     }
 }
