@@ -78,7 +78,11 @@ class ReceitaControllerTest {
         mockMvc.perform(post("/receitas")
                         .param("proporcao", "1:15")
                         .param("tempoInfusao", "180")
-                        .param("notaSensorial", "4"))
+                        .param("notaSensorial", "4")
+                        .param("ingredientes[0].nome", "açúcar")
+                        .param("ingredientes[0].quantidade", "2 colheres")
+                        .param("ingredientes[1].nome", "leite")
+                        .param("ingredientes[1].quantidade", "100ml"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/receitas"));
     }
@@ -95,7 +99,9 @@ class ReceitaControllerTest {
         mockMvc.perform(post("/receitas")
                         .param("cafeId", "1")
                         .param("tipoInfusaoId", "1")
-                        .param("proporcao", "1:15"))
+                        .param("proporcao", "1:15")
+                        .param("ingredientes[0].nome", "mel")
+                        .param("ingredientes[0].quantidade", "1 colher"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/receitas"));
     }
@@ -117,7 +123,20 @@ class ReceitaControllerTest {
     @Test
     @DisplayName("GET /receitas/{id}/editar deve retornar formulário com receita existente")
     void deveRetornarFormularioDeEdicao() throws Exception {
-        when(receitaService.findById(1L)).thenReturn(Receita.builder().id(1L).ratio("1:15").build());
+        when(receitaService.findById(1L)).thenReturn(Receita.builder().id(1L).proporcao("1:15").build());
+        when(cafeService.findAll()).thenReturn(List.of());
+        when(tipoInfusaoService.findAll()).thenReturn(List.of());
+
+        mockMvc.perform(get("/receitas/1/editar"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("form-receita"))
+                .andExpect(model().attributeExists("receita"));
+    }
+
+    @Test
+    @DisplayName("GET /receitas/{id}/editar com ingredientes existentes deve retornar formulário completo")
+    void deveRetornarFormularioDeEdicaoComIngredientesExistentes() throws Exception {
+        when(receitaService.findById(1L)).thenReturn(Receita.builder().id(1L).proporcao("1:15").build());
         when(cafeService.findAll()).thenReturn(List.of());
         when(tipoInfusaoService.findAll()).thenReturn(List.of());
 
@@ -134,7 +153,9 @@ class ReceitaControllerTest {
 
         mockMvc.perform(post("/receitas/1")
                         .param("proporcao", "1:16")
-                        .param("notaSensorial", "5"))
+                        .param("notaSensorial", "5")
+                        .param("ingredientes[0].nome", "gengibre")
+                        .param("ingredientes[0].quantidade", "1 fatia"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/receitas"));
     }
