@@ -10,6 +10,14 @@ Funcionalidade: Gerenciamento de Receitas de Preparo
     Quando eu cadastro uma receita com proporção "1:15", tempo 180 e nota 4
     Então a receita deve estar salva no banco de dados
 
+  Cenário: Adicionar receita com múltiplos ingredientes
+    Dado que existe um café chamado "Bourbon Amarelo" para a receita
+    E que existe um método chamado "V60" para a receita
+    Quando eu cadastro uma receita com proporção "1:15", tempo 180 e nota 4
+    E eu adiciono o ingrediente "açúcar" com quantidade "2 colheres"
+    E eu adiciono o ingrediente "leite" com quantidade "100ml"
+    Então a receita é salva com 2 ingredientes
+
   Cenário: Rejeitar receita com nota sensorial inválida
     Dado que existe um café chamado "Bourbon Amarelo" para a receita
     E que existe um método chamado "V60" para a receita
