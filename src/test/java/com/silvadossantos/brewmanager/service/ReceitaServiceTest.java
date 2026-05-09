@@ -135,6 +135,28 @@ class ReceitaServiceTest {
     }
 
     @Test
+    @DisplayName("Deve salvar e retornar receita com observações")
+    void deveSalvarReceitaComObservacoes() {
+        Receita receita = Receita.builder()
+                .proporcao("1:15")
+                .notaSensorial(3)
+                .observacoes("Usar água a 92°C")
+                .build();
+        Receita saved = Receita.builder()
+                .id(1L)
+                .proporcao("1:15")
+                .notaSensorial(3)
+                .observacoes("Usar água a 92°C")
+                .build();
+        when(receitaRepository.save(any(Receita.class))).thenReturn(saved);
+
+        Receita result = receitaService.save(receita);
+
+        assertThat(result.getObservacoes()).isEqualTo("Usar água a 92°C");
+        verify(receitaRepository).save(receita);
+    }
+
+    @Test
     @DisplayName("Deve salvar receita com ingredientes")
     void deveSalvarReceitaComIngredientes() {
         Receita receita = Receita.builder()

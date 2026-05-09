@@ -37,4 +37,7 @@ public class Receita {
 
     @Column(name = "nota_sensorial")
     private Integer notaSensorial;
+
+    @Column(name = "observacoes")
+    private String observacoes;
 }

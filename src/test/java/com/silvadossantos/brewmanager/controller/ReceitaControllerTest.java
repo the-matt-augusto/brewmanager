@@ -1,8 +1,10 @@
 package com.silvadossantos.brewmanager.controller;
 
 import com.silvadossantos.brewmanager.model.Cafe;
+import com.silvadossantos.brewmanager.model.IngredienteReceita;
 import com.silvadossantos.brewmanager.model.Receita;
 import com.silvadossantos.brewmanager.model.TipoInfusao;
+import org.springframework.http.MediaType;
 import com.silvadossantos.brewmanager.service.CafeService;
 import com.silvadossantos.brewmanager.service.ReceitaService;
 import com.silvadossantos.brewmanager.service.TipoInfusaoService;
@@ -172,6 +174,47 @@ class ReceitaControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("form-receita"))
                 .andExpect(model().attribute("erro", "Proporção inválida. Use o formato 1:15."));
+    }
+
+    @Test
+    @DisplayName("GET /receitas/{id}/detalhes deve retornar JSON com campos da receita")
+    void deveRetornarDetalhesEmJSON() throws Exception {
+        Cafe cafe = Cafe.builder().id(1L).nome("Bourbon Amarelo")
+                .marcaTorrefacao("Bendita").origem("Minas Gerais")
+                .nivelTorra("Médio").tipoCafe("Arábica").nivelMoagem("Fino").build();
+        TipoInfusao tipo = TipoInfusao.builder().id(1L).nome("V60").build();
+        Receita receita = Receita.builder()
+                .id(1L).cafe(cafe).tipoInfusao(tipo)
+                .proporcao("1:15").tempoInfusao(180).notaSensorial(4)
+                .observacoes("Água a 92°C").build();
+        when(receitaService.findById(1L)).thenReturn(receita);
+
+        mockMvc.perform(get("/receitas/1/detalhes"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.cafeName").value("Bourbon Amarelo"))
+                .andExpect(jsonPath("$.cafeMarca").value("Bendita"))
+                .andExpect(jsonPath("$.tipoInfusao").value("V60"))
+                .andExpect(jsonPath("$.proporcao").value("1:15"))
+                .andExpect(jsonPath("$.tempoInfusao").value(180))
+                .andExpect(jsonPath("$.notaSensorial").value(4))
+                .andExpect(jsonPath("$.observacoes").value("Água a 92°C"));
+    }
+
+    @Test
+    @DisplayName("GET /receitas/{id}/detalhes deve incluir ingredientes no JSON")
+    void deveRetornarDetalhesComIngredientes() throws Exception {
+        IngredienteReceita ing = IngredienteReceita.builder()
+                .id(1L).nome("açúcar").quantidade("2 colheres").build();
+        Receita receita = Receita.builder()
+                .id(1L).proporcao("1:15")
+                .ingredientes(List.of(ing)).build();
+        when(receitaService.findById(1L)).thenReturn(receita);
+
+        mockMvc.perform(get("/receitas/1/detalhes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.ingredientes[0].nome").value("açúcar"))
+                .andExpect(jsonPath("$.ingredientes[0].quantidade").value("2 colheres"));
     }
 
     @Test

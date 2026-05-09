@@ -1,10 +1,14 @@
 package com.silvadossantos.brewmanager.cucumber.stepdefs;
 
 import com.silvadossantos.brewmanager.model.Cafe;
+import com.silvadossantos.brewmanager.model.Receita;
 import com.silvadossantos.brewmanager.model.TipoInfusao;
 import com.silvadossantos.brewmanager.service.CafeService;
 import com.silvadossantos.brewmanager.service.ReceitaService;
 import com.silvadossantos.brewmanager.service.TipoInfusaoService;
+import java.util.List;
+import java.util.Objects;
+import org.springframework.jdbc.core.JdbcTemplate;
 import io.cucumber.java.Before;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.Então;
@@ -18,6 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public class ReceitaStepDefinitions {
@@ -35,6 +40,9 @@ public class ReceitaStepDefinitions {
 
     @Autowired
     private TipoInfusaoService tipoInfusaoService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private MvcResult lastResult;
     private Long cafeId;
@@ -131,6 +139,31 @@ public class ReceitaStepDefinitions {
                             .param("ingredientes[0].quantidade", quantidade))
                     .andReturn();
         }
+    }
+
+    @Quando("eu cadastro uma receita com proporção {string}, tempo {int}, nota {int} e observações {string}")
+    public void eu_cadastro_receita_com_observacoes(String proporcao, int tempo, int nota, String observacoes) throws Exception {
+        lastResult = mockMvc.perform(post("/receitas")
+                        .characterEncoding("UTF-8")
+                        .param("proporcao", proporcao)
+                        .param("tempoInfusao", String.valueOf(tempo))
+                        .param("notaSensorial", String.valueOf(nota))
+                        .param("observacoes", observacoes)
+                        .param("cafeId", cafeId != null ? cafeId.toString() : "")
+                        .param("tipoInfusaoId", tipoInfusaoId != null ? tipoInfusaoId.toString() : ""))
+                .andReturn();
+    }
+
+    @Então("as observações {string} devem estar salvas na receita")
+    public void as_observacoes_devem_estar_salvas(String observacoes) {
+        assertThat(lastResult.getResponse().getStatus())
+                .as("POST /receitas deve redirecionar após salvar com observações")
+                .isIn(301, 302, 303, 307, 308);
+        List<String> found = jdbcTemplate.queryForList(
+                "SELECT observacoes FROM receitas WHERE observacoes = ?", String.class, observacoes);
+        assertThat(found)
+                .as("Receita com observações '%s' deve existir no banco", observacoes)
+                .isNotEmpty();
     }
 
     @Então("a receita é salva com {int} ingredientes")

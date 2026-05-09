@@ -31,3 +31,10 @@ Funcionalidade: Gerenciamento de Receitas de Preparo
     Quando eu tento cadastrar uma receita com proporção "invalido"
     Então a receita não deve ser salva
     E o sistema deve exibir o erro "Proporção inválida. Use o formato 1:15."
+
+  Cenário: Cadastrar receita com observações
+    Dado que existe um café chamado "Bourbon Amarelo" para a receita
+    E que existe um método chamado "V60" para a receita
+    Quando eu cadastro uma receita com proporção "1:15", tempo 180, nota 4 e observações "Agua a 92 graus"
+    Então a receita deve estar salva no banco de dados
+    E as observações "Agua a 92 graus" devem estar salvas na receita

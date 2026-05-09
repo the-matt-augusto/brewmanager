@@ -14,6 +14,8 @@
         label { display: block; margin-bottom: 5px; font-weight: 600; }
         input, select { width: 100%; padding: 8px 12px; border: 1px solid #d4b896; border-radius: 6px; font-family: inherit; font-size: 1rem; color: #4a3728; background: #fdfaf6; box-sizing: border-box; margin-bottom: 15px; }
         input:focus, select:focus { outline: none; border-color: #6f4e37; }
+        textarea { width: 100%; padding: 8px 12px; border: 1px solid #d4b896; border-radius: 6px; font-family: inherit; font-size: 1rem; color: #4a3728; background: #fdfaf6; box-sizing: border-box; margin-bottom: 15px; resize: vertical; }
+        textarea:focus { outline: none; border-color: #6f4e37; }
         .btn { display: inline-block; padding: 10px 22px; border-radius: 6px; text-decoration: none; font-size: 1rem; cursor: pointer; border: none; font-family: inherit; }
         .btn-primary { background-color: #6f4e37; color: white; }
         .btn-primary:hover { background-color: #5a3e2b; }
@@ -81,6 +83,11 @@
             <option value="4" th:selected="${receita != null and receita.notaSensorial == 4}">4 ★★★★</option>
             <option value="5" th:selected="${receita != null and receita.notaSensorial == 5}">5 ★★★★★</option>
         </select>
+
+        <label for="observacoes">Observações</label>
+        <textarea id="observacoes" name="observacoes" rows="3"
+                  placeholder="Notas sobre o preparo, dicas, ajustes..."
+                  th:text="${receita != null ? receita.observacoes : ''}"></textarea>
 
         <div class="form-section">
             <h3>Ingredientes</h3>
