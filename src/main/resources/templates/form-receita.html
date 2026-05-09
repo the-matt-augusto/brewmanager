@@ -21,6 +21,17 @@
         .btn-secondary:hover { background-color: #e4d0b8; }
         .erro { background-color: #fde8e8; color: #c0392b; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; }
         small { color: #8b5a2b; display: block; margin-top: -10px; margin-bottom: 12px; }
+        .form-section { margin: 25px 0; padding: 20px; background: #fdfaf6; border-radius: 8px; border-left: 4px solid #6f4e37; }
+        .form-section h3 { color: #4a3728; margin-top: 0; margin-bottom: 15px; }
+        .table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .table thead { background-color: #f0e6d9; }
+        .table th { padding: 10px; text-align: left; font-weight: 600; color: #4a3728; border-bottom: 2px solid #d4b896; }
+        .table td { padding: 10px; border-bottom: 1px solid #e4d0b8; }
+        .table input { margin-bottom: 0; width: 100%; }
+        .btn-sm { padding: 6px 12px; font-size: 0.9rem; }
+        .btn-danger { background-color: #c0392b; color: white; }
+        .btn-danger:hover { background-color: #a93226; }
+        .mt-2 { margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -71,9 +82,47 @@
             <option value="5" th:selected="${receita != null and receita.notaSensorial == 5}">5 ★★★★★</option>
         </select>
 
+        <div class="form-section">
+            <h3>Ingredientes</h3>
+            <div id="ingredientesContainer">
+                <table class="table" id="ingredientesTable">
+                    <thead>
+                        <tr>
+                            <th>Nome do Ingrediente</th>
+                            <th>Quantidade</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Linhas existentes (para edição) -->
+                        <tr th:each="ingrediente, stat : ${receita.ingredientes}">
+                            <td>
+                                <input type="text" th:name="|ingredientes[${stat.index}].nome|"
+                                       th:value="${ingrediente.nome}" class="form-control" required>
+                            </td>
+                            <td>
+                                <input type="text" th:name="|ingredientes[${stat.index}].quantidade|"
+                                       th:value="${ingrediente.quantidade}" class="form-control" required>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm remover-ingrediente">
+                                    Remover
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" id="addIngredienteBtn" class="btn btn-primary mt-2">
+                + Adicionar Ingrediente
+            </button>
+        </div>
+
         <button type="submit" class="btn btn-primary">Salvar</button>
         <a th:href="@{/receitas}" class="btn btn-secondary" style="margin-left: 10px;">Cancelar</a>
     </form>
+
+    <script src="/js/ingredientes-dinamico.js"></script>
 </div>
 </body>
 </html>
