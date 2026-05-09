@@ -2,6 +2,8 @@ package com.silvadossantos.brewmanager.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "receitas")
@@ -22,6 +24,10 @@ public class Receita {
     @ManyToOne
     @JoinColumn(name = "cafe_id")
     private Cafe cafe;
+
+    @OneToMany(mappedBy = "receita", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<IngredienteReceita> ingredientes = new ArrayList<>();
 
     @Column(name = "proporcao")
     private String proporcao;
