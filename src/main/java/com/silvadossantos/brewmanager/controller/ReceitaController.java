@@ -1,5 +1,6 @@
 package com.silvadossantos.brewmanager.controller;
 
+import com.silvadossantos.brewmanager.model.IngredienteReceita;
 import com.silvadossantos.brewmanager.model.Receita;
 import com.silvadossantos.brewmanager.service.CafeService;
 import com.silvadossantos.brewmanager.service.ReceitaService;
@@ -40,6 +41,14 @@ public class ReceitaController {
             Model model) {
         if (cafeId != null) receita.setCafe(cafeService.findById(cafeId));
         if (tipoInfusaoId != null) receita.setTipoInfusao(tipoInfusaoService.findById(tipoInfusaoId));
+
+        // Associar ingredientes à receita (mapear referência bidirecional)
+        if (receita.getIngredientes() != null) {
+            for (IngredienteReceita ing : receita.getIngredientes()) {
+                ing.setReceita(receita);
+            }
+        }
+
         try {
             receitaService.save(receita);
             return "redirect:/receitas";
@@ -70,6 +79,14 @@ public class ReceitaController {
         receita.setId(id);
         if (cafeId != null) receita.setCafe(cafeService.findById(cafeId));
         if (tipoInfusaoId != null) receita.setTipoInfusao(tipoInfusaoService.findById(tipoInfusaoId));
+
+        // Associar ingredientes à receita (mapear referência bidirecional)
+        if (receita.getIngredientes() != null) {
+            for (IngredienteReceita ing : receita.getIngredientes()) {
+                ing.setReceita(receita);
+            }
+        }
+
         try {
             receitaService.save(receita);
             return "redirect:/receitas";
