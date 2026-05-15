@@ -1,5 +1,6 @@
 package com.silvadossantos.brewmanager.controller;
 
+import com.silvadossantos.brewmanager.exception.EntityInUseException;
 import com.silvadossantos.brewmanager.model.TipoInfusao;
 import com.silvadossantos.brewmanager.service.TipoInfusaoService;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,5 +106,17 @@ class TipoInfusaoControllerTest {
         mockMvc.perform(get("/tipos-infusao/1/excluir"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/tipos-infusao"));
+    }
+
+    @Test
+    @DisplayName("GET /tipos-infusao/{id}/excluir deve redirecionar com erro quando método está em uso")
+    void deveRedirecionarComErroQuandoTipoInfusaoEstaEmUso() throws Exception {
+        doThrow(new EntityInUseException("Não é possível excluir: este método de infusão está vinculado a uma ou mais receitas."))
+                .when(tipoInfusaoService).deleteById(1L);
+
+        mockMvc.perform(get("/tipos-infusao/1/excluir"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/tipos-infusao"))
+                .andExpect(flash().attributeExists("erro"));
     }
 }

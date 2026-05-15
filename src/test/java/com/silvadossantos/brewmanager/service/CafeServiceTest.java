@@ -1,7 +1,9 @@
 package com.silvadossantos.brewmanager.service;
 
+import com.silvadossantos.brewmanager.exception.EntityInUseException;
 import com.silvadossantos.brewmanager.model.Cafe;
 import com.silvadossantos.brewmanager.repository.CafeRepository;
+import com.silvadossantos.brewmanager.repository.ReceitaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +24,9 @@ class CafeServiceTest {
 
     @Mock
     private CafeRepository cafeRepository;
+
+    @Mock
+    private ReceitaRepository receitaRepository;
 
     @InjectMocks
     private CafeService cafeService;
@@ -75,12 +80,29 @@ class CafeServiceTest {
     }
 
     @Test
-    @DisplayName("Deve excluir café por id")
+    @DisplayName("Deve excluir café por id quando não há receitas vinculadas")
     void deveExcluirCafePorId() {
+        Cafe cafe = Cafe.builder().id(1L).nome("Test Coffee").build();
+        when(cafeRepository.findById(1L)).thenReturn(Optional.of(cafe));
+        when(receitaRepository.existsByCafe(cafe)).thenReturn(false);
         doNothing().when(cafeRepository).deleteById(1L);
 
         cafeService.deleteById(1L);
 
         verify(cafeRepository).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("Deve lançar EntityInUseException ao excluir café vinculado a receitas")
+    void deveLancarEntityInUseExceptionAoExcluirCafeVinculadoAReceitas() {
+        Cafe cafe = Cafe.builder().id(1L).nome("Test Coffee").build();
+        when(cafeRepository.findById(1L)).thenReturn(Optional.of(cafe));
+        when(receitaRepository.existsByCafe(cafe)).thenReturn(true);
+
+        assertThatThrownBy(() -> cafeService.deleteById(1L))
+                .isInstanceOf(EntityInUseException.class)
+                .hasMessageContaining("receitas");
+
+        verify(cafeRepository, never()).deleteById(any());
     }
 }

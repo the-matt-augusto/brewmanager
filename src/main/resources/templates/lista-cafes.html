@@ -28,6 +28,15 @@
         .badge-claro { background-color: #fef3c7; color: #92400e; }
         .badge-medio { background-color: #fed7aa; color: #7c2d12; }
         .badge-escuro { background-color: #78350f; color: white; }
+        .alert-erro { background-color: #fdecea; border-left: 4px solid #c0392b; color: #7b241c; padding: 12px 16px; border-radius: 6px; margin-top: 16px; font-size: 0.9rem; }
+        .table-wrapper { overflow-x: auto; }
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .container { padding: 20px; border-radius: 10px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px 10px; }
+            .btn { font-size: 0.8rem; padding: 5px 10px; }
+        }
     </style>
 </head>
 <body>
@@ -44,6 +53,9 @@
 
     <a th:href="@{/cafes/novo}" class="btn btn-primary">+ Novo Café</a>
 
+    <div class="alert-erro" th:if="${erro}" th:text="${erro}"></div>
+
+    <div class="table-wrapper">
     <table th:if="${!cafes.isEmpty()}">
         <thead>
         <tr>
@@ -78,6 +90,7 @@
         </tbody>
     </table>
 
+    </div>
     <p class="vazio" th:if="${cafes.isEmpty()}">Nenhum café cadastrado ainda.</p>
 </div>
 </body>

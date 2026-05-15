@@ -21,3 +21,8 @@ Funcionalidade: Gerenciamento de Cafés
     E o nível de torra com "Escura"
     E eu clico em salvar
     Então o café "Colômbia Excelso" deve estar salvo no banco de dados
+
+  Cenário: Impedir exclusão de café vinculado a receita
+    Dado que existe um café chamado "Café Em Uso" associado a uma receita
+    Quando eu tento excluir o café com nome "Café Em Uso"
+    Então a exclusão deve ser bloqueada com mensagem de erro

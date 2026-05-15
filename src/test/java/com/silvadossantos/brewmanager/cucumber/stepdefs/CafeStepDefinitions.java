@@ -1,7 +1,11 @@
 package com.silvadossantos.brewmanager.cucumber.stepdefs;
 
 import com.silvadossantos.brewmanager.model.Cafe;
+import com.silvadossantos.brewmanager.model.Receita;
+import com.silvadossantos.brewmanager.model.TipoInfusao;
 import com.silvadossantos.brewmanager.service.CafeService;
+import com.silvadossantos.brewmanager.service.ReceitaService;
+import com.silvadossantos.brewmanager.service.TipoInfusaoService;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
 import io.cucumber.java.pt.Dado;
@@ -21,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("unchecked")
 public class CafeStepDefinitions {
 
     @Autowired
@@ -30,6 +35,12 @@ public class CafeStepDefinitions {
 
     @Autowired
     private CafeService cafeService;
+
+    @Autowired
+    private TipoInfusaoService tipoInfusaoService;
+
+    @Autowired
+    private ReceitaService receitaService;
 
     private MvcResult lastResult;
     private Cafe cafeToSave;
@@ -107,5 +118,35 @@ public class CafeStepDefinitions {
         List<Cafe> cafes = cafeService.findAll();
         boolean found = cafes.stream().anyMatch(c -> c.getNome().equals(nome));
         assertThat(found).isTrue();
+    }
+
+    @Dado("que existe um café chamado {string} associado a uma receita")
+    public void que_existe_cafe_associado_a_receita(String nomeCafe) {
+        Cafe cafe = cafeService.save(Cafe.builder().nome(nomeCafe).build());
+        TipoInfusao tipo = tipoInfusaoService.save(TipoInfusao.builder().nome("V60").build());
+        receitaService.save(Receita.builder()
+                .cafe(cafe)
+                .tipoInfusao(tipo)
+                .proporcao("1:15")
+                .tempoInfusao(180)
+                .notaSensorial(4)
+                .build());
+    }
+
+    @Quando("eu tento excluir o café com nome {string}")
+    public void eu_tento_excluir_cafe(String nomeCafe) throws Exception {
+        Cafe cafe = cafeService.findAll().stream()
+                .filter(c -> c.getNome().equals(nomeCafe))
+                .findFirst()
+                .orElseThrow();
+        lastResult = mockMvc.perform(get("/cafes/" + cafe.getId() + "/excluir"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+    }
+
+    @Então("a exclusão deve ser bloqueada com mensagem de erro")
+    public void a_exclusao_deve_ser_bloqueada_com_mensagem_de_erro() {
+        Map<String, Object> flash = lastResult.getFlashMap();
+        assertThat(flash).containsKey("erro");
     }
 }

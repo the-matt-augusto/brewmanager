@@ -1,11 +1,13 @@
 package com.silvadossantos.brewmanager.controller;
 
+import com.silvadossantos.brewmanager.exception.EntityInUseException;
 import com.silvadossantos.brewmanager.model.TipoInfusao;
 import com.silvadossantos.brewmanager.service.TipoInfusaoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/tipos-infusao")
@@ -46,8 +48,12 @@ public class TipoInfusaoController {
     }
 
     @GetMapping("/{id}/excluir")
-    public String excluir(@PathVariable Long id) {
-        tipoInfusaoService.deleteById(id);
+    public String excluir(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            tipoInfusaoService.deleteById(id);
+        } catch (EntityInUseException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        }
         return "redirect:/tipos-infusao";
     }
 }

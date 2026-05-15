@@ -51,6 +51,18 @@
         .sem-dado { color: #b0897a; font-style: italic; }
         .secao-titulo { font-size: 0.82rem; color: #6f4e37; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 8px; border-bottom: 1px solid #f0e6d9; padding-bottom: 4px; }
         .secao-titulo:first-child { margin-top: 0; }
+        .table-wrapper { overflow-x: auto; }
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .container { padding: 20px; border-radius: 10px; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px 10px; }
+            .btn { font-size: 0.8rem; padding: 5px 10px; }
+            .modal { padding: 20px; max-height: 90vh; width: 95%; border-radius: 10px; }
+            .detalhe-grid { grid-template-columns: 1fr; gap: 10px; }
+            .modal-acoes { flex-direction: column; }
+            .modal-acoes .btn { width: 100%; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -67,6 +79,7 @@
 
     <a th:href="@{/receitas/novo}" class="btn btn-primary">+ Nova Receita</a>
 
+    <div class="table-wrapper">
     <table th:if="${!receitas.isEmpty()}">
         <thead>
         <tr>
@@ -99,6 +112,7 @@
         </tbody>
     </table>
 
+    </div>
     <p class="vazio" th:if="${receitas.isEmpty()}">Nenhuma receita registrada ainda.</p>
 </div>
 

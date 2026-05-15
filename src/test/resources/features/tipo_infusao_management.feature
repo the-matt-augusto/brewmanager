@@ -17,3 +17,8 @@ Funcionalidade: Gerenciamento de Métodos de Infusão
     Dado que eu estou na página de cadastro de método
     Quando eu cadastro o método com nome "Chemex" e descrição "Coagem com filtro grosso"
     Então o método "Chemex" deve estar salvo
+
+  Cenário: Impedir exclusão de método de infusão vinculado a receita
+    Dado que existe um método de infusão chamado "V60 Em Uso" associado a uma receita
+    Quando eu tento excluir o método com nome "V60 Em Uso"
+    Então a exclusão do método deve ser bloqueada com mensagem de erro

@@ -1,11 +1,13 @@
 package com.silvadossantos.brewmanager.controller;
 
+import com.silvadossantos.brewmanager.exception.EntityInUseException;
 import com.silvadossantos.brewmanager.model.Cafe;
 import com.silvadossantos.brewmanager.service.CafeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,8 +52,12 @@ public class CafeController {
     }
 
     @GetMapping("/cafes/{id}/excluir")
-    public String excluir(@PathVariable Long id) {
-        cafeService.deleteById(id);
+    public String excluir(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            cafeService.deleteById(id);
+        } catch (EntityInUseException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        }
         return "redirect:/cafes";
     }
 }

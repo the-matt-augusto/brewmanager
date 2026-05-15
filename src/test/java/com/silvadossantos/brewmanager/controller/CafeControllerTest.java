@@ -1,5 +1,6 @@
 package com.silvadossantos.brewmanager.controller;
 
+import com.silvadossantos.brewmanager.exception.EntityInUseException;
 import com.silvadossantos.brewmanager.model.Cafe;
 import com.silvadossantos.brewmanager.service.CafeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,5 +112,17 @@ class CafeControllerTest {
         mockMvc.perform(get("/cafes/1/excluir"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/cafes"));
+    }
+
+    @Test
+    @DisplayName("GET /cafes/{id}/excluir deve redirecionar com erro quando café está em uso")
+    void deveRedirecionarComErroQuandoCafeEstaEmUso() throws Exception {
+        doThrow(new EntityInUseException("Não é possível excluir: este café está vinculado a uma ou mais receitas."))
+                .when(cafeService).deleteById(1L);
+
+        mockMvc.perform(get("/cafes/1/excluir"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/cafes"))
+                .andExpect(flash().attributeExists("erro"));
     }
 }

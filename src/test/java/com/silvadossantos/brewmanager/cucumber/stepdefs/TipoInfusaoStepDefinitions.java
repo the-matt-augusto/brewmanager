@@ -1,6 +1,10 @@
 package com.silvadossantos.brewmanager.cucumber.stepdefs;
 
+import com.silvadossantos.brewmanager.model.Cafe;
+import com.silvadossantos.brewmanager.model.Receita;
 import com.silvadossantos.brewmanager.model.TipoInfusao;
+import com.silvadossantos.brewmanager.service.CafeService;
+import com.silvadossantos.brewmanager.service.ReceitaService;
 import com.silvadossantos.brewmanager.service.TipoInfusaoService;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
@@ -21,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("unchecked")
 public class TipoInfusaoStepDefinitions {
 
     @Autowired
@@ -30,6 +35,12 @@ public class TipoInfusaoStepDefinitions {
 
     @Autowired
     private TipoInfusaoService tipoInfusaoService;
+
+    @Autowired
+    private CafeService cafeService;
+
+    @Autowired
+    private ReceitaService receitaService;
 
     private MvcResult lastResult;
 
@@ -79,5 +90,35 @@ public class TipoInfusaoStepDefinitions {
     public void o_metodo_deve_estar_salvo(String nome) {
         List<TipoInfusao> tipos = tipoInfusaoService.findAll();
         assertThat(tipos).anyMatch(t -> t.getNome().equals(nome));
+    }
+
+    @Dado("que existe um método de infusão chamado {string} associado a uma receita")
+    public void que_existe_metodo_associado_a_receita(String nomeMetodo) {
+        Cafe cafe = cafeService.save(Cafe.builder().nome("Café para teste").build());
+        TipoInfusao tipo = tipoInfusaoService.save(TipoInfusao.builder().nome(nomeMetodo).build());
+        receitaService.save(Receita.builder()
+                .cafe(cafe)
+                .tipoInfusao(tipo)
+                .proporcao("1:15")
+                .tempoInfusao(180)
+                .notaSensorial(4)
+                .build());
+    }
+
+    @Quando("eu tento excluir o método com nome {string}")
+    public void eu_tento_excluir_metodo(String nomeMetodo) throws Exception {
+        TipoInfusao tipo = tipoInfusaoService.findAll().stream()
+                .filter(t -> t.getNome().equals(nomeMetodo))
+                .findFirst()
+                .orElseThrow();
+        lastResult = mockMvc.perform(get("/tipos-infusao/" + tipo.getId() + "/excluir"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn();
+    }
+
+    @Então("a exclusão do método deve ser bloqueada com mensagem de erro")
+    public void a_exclusao_do_metodo_deve_ser_bloqueada() {
+        Map<String, Object> flash = lastResult.getFlashMap();
+        assertThat(flash).containsKey("erro");
     }
 }

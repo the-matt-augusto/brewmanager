@@ -1,6 +1,8 @@
 package com.silvadossantos.brewmanager.service;
 
+import com.silvadossantos.brewmanager.exception.EntityInUseException;
 import com.silvadossantos.brewmanager.model.TipoInfusao;
+import com.silvadossantos.brewmanager.repository.ReceitaRepository;
 import com.silvadossantos.brewmanager.repository.TipoInfusaoRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,9 @@ class TipoInfusaoServiceTest {
 
     @Mock
     private TipoInfusaoRepository tipoInfusaoRepository;
+
+    @Mock
+    private ReceitaRepository receitaRepository;
 
     @InjectMocks
     private TipoInfusaoService tipoInfusaoService;
@@ -75,12 +80,29 @@ class TipoInfusaoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve excluir tipo de infusão por id")
+    @DisplayName("Deve excluir tipo de infusão por id quando não há receitas vinculadas")
     void deveExcluirTipoDeInfusaoPorId() {
+        TipoInfusao tipo = TipoInfusao.builder().id(1L).nome("V60").build();
+        when(tipoInfusaoRepository.findById(1L)).thenReturn(Optional.of(tipo));
+        when(receitaRepository.existsByTipoInfusao(tipo)).thenReturn(false);
         doNothing().when(tipoInfusaoRepository).deleteById(1L);
 
         tipoInfusaoService.deleteById(1L);
 
         verify(tipoInfusaoRepository).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("Deve lançar EntityInUseException ao excluir tipo de infusão vinculado a receitas")
+    void deveLancarEntityInUseExceptionAoExcluirTipoInfusaoVinculadoAReceitas() {
+        TipoInfusao tipo = TipoInfusao.builder().id(1L).nome("V60").build();
+        when(tipoInfusaoRepository.findById(1L)).thenReturn(Optional.of(tipo));
+        when(receitaRepository.existsByTipoInfusao(tipo)).thenReturn(true);
+
+        assertThatThrownBy(() -> tipoInfusaoService.deleteById(1L))
+                .isInstanceOf(EntityInUseException.class)
+                .hasMessageContaining("receitas");
+
+        verify(tipoInfusaoRepository, never()).deleteById(any());
     }
 }
